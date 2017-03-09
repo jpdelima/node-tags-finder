@@ -70,19 +70,16 @@ class TagsFinder {
     _processObject(tags, obj, results) {
         for(var key in obj){
             if(obj.hasOwnProperty(key)) {
-                if(key === 'tags' && Array.isArray(obj.tags)) {
+                if (typeof obj[key] === 'object') {
+                    this._processObject(tags, obj[key], results);
+                } else if (Array.isArray(obj[key])) {
+                    for (const child of obj[key]) {
+                        this._processObject(tags, child, results);
+                    }
+                } else if (typeof obj[key] === 'string') {
                     for(const tag of tags) {
-                        if(obj.tags.indexOf(tag) > -1) {
+                        if(obj[key].indexOf(tag) > -1) {
                             results[tag] += 1;
-                        }
-                    }
-                } else {
-                    if (typeof obj[key] === 'object') {
-                        this._processObject(tags, obj[key], results);
-                    }
-                    else if (Array.isArray(obj[key])) {
-                        for (const child of obj[key]) {
-                            this._processObject(tags, child, results);
                         }
                     }
                 }
